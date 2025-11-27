@@ -1,0 +1,1315 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>K-Track - Drama Korea Tracker</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #16476A;
+            --secondary: #80A1BA;
+            --success: #FF5555;
+            --danger: #BF1A1A;
+            --light-bg: #ffffff;
+            --dark-bg: #000000;
+            --light-text: #333333;
+            --dark-text: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--light-bg);
+            color: var(--light-text);
+            transition: all 0.3s ease;
+        }
+
+        body.dark-mode {
+            background-color: var(--dark-bg);
+            color: var(--dark-text);
+        }
+
+        body.dark-mode .card {
+            background-color: #1a1a1a;
+            color: var(--dark-text);
+        }
+
+        body.dark-mode .navbar {
+            background-color: #1a1a1a !important;
+        }
+
+        body.dark-mode .footer {
+            background-color: #1a1a1a;
+        }
+
+        /* Header */
+        .navbar {
+            background-color: var(--primary) !important;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .navbar-brand {
+            font-weight: 200;
+            font-size: 2.2rem;
+            color: white !important;
+            display: flex;
+            align-items: center;
+            gap: 1.0rem;
+        }
+
+        .navbar-brand img {
+            max-width: 55px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        .logo-placeholder {
+            width: 65px;
+            height: 65px;
+            background: white;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.1rem;
+        }
+
+        .nav-link {
+            color: white !important;
+            margin: 0 0.5rem;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-link:hover {
+            color: var(--secondary) !important;
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1);
+        }
+
+        /* Container */
+        .main-container {
+            min-height: calc(100vh - 200px);
+            padding: 2rem 0;
+        }
+
+        /* Cards */
+        .drama-card {
+            border: none;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            margin-bottom: 2rem;
+            cursor: pointer;
+        }
+
+        .drama-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .drama-card img {
+            width: 100%;
+            height: 500px;
+            object-fit: cover;
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        .status-watching {
+            background-color: var(--success);
+            color: white;
+        }
+
+        .status-completed {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .status-plan {
+            background-color: var(--secondary);
+            color: white;
+        }
+
+        .progress {
+            height: 8px;
+            border-radius: 10px;
+            margin: 1rem 0;
+        }
+
+        .rating {
+            color: #ffc107;
+            font-size: 1.2rem;
+        }
+
+        /* Horizontal Scroll */
+        .scroll-container {
+            display: flex;
+            overflow-x: auto;
+            gap: 1.5rem;
+            padding: 1rem 0;
+            scroll-behavior: smooth;
+        }
+
+        .scroll-container::-webkit-scrollbar {
+            height: 8px;
+        }
+
+        .scroll-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .scroll-container::-webkit-scrollbar-thumb {
+            background: var(--secondary);
+            border-radius: 10px;
+        }
+
+        .scroll-card {
+            min-width: 250px;
+            flex-shrink: 0;
+        }
+
+        /* Search */
+        .search-box {
+            max-width: 500px;
+            margin: 2rem auto;
+        }
+
+        /* Footer */
+        .footer {
+            background-color: var(--primary);
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+            margin-top: 3rem;
+        }
+
+        .footer a {
+            color: white;
+            text-decoration: none;
+            margin: 0 0.5rem;
+        }
+
+        .footer a:hover {
+            color: var(--secondary);
+        }
+
+        /* Modal */
+        .modal-content {
+            border-radius: 15px;
+        }
+
+        body.dark-mode .modal-content {
+            background-color: #1a1a1a;
+            color: var(--dark-text);
+        }
+
+        /* Buttons */
+        .btn-primary {
+            background-color: var(--primary);
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--secondary);
+        }
+
+        .btn-success {
+            background-color: var(--success);
+            border: none;
+        }
+
+        .section-title {
+            font-weight: 600;
+            color: var(--primary);
+            margin: 2rem 0 1rem 0;
+            font-size: 1.5rem;
+        }
+
+        body.dark-mode .section-title {
+            color: var(--secondary);
+        }
+
+        .genre-tag {
+            display: inline-block;
+            padding: 0.2rem 0.6rem;
+            background-color: #e9ecef;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            margin: 0.2rem;
+        }
+
+        body.dark-mode .genre-tag {
+            background-color: #333;
+        }
+
+        /* Filter Buttons */
+        .filter-btn {
+            margin: 0.3rem;
+            border-radius: 20px;
+        }
+
+        .page-content {
+            display: none;
+        }
+
+        .page-content.active {
+            display: block;
+        }
+
+        .review-card img, .review-card video {
+            width: 100%;
+            max-height: 250px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin: 0.5rem 0;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .review-card img:hover, .review-card video:hover {
+            transform: scale(1.02);
+        }
+
+        .media-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .media-item {
+            position: relative;
+            aspect-ratio: 1;
+            overflow: hidden;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .media-item img, .media-item video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .fullscreen-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.95);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .fullscreen-overlay.active {
+            display: flex;
+        }
+
+        .fullscreen-content {
+            max-width: 90%;
+            max-height: 90%;
+        }
+
+        .fullscreen-close {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            color: white;
+            font-size: 40px;
+            cursor: pointer;
+            z-index: 10000;
+        }
+
+        .stats-card {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .stats-card h3 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .stats-card p {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#" onclick="showPage('home')">
+                <img src="asset/logo5.png" alt="K-Track Logo" id="appLogo" onerror="this.style.display='none'; document.getElementById('logoPlaceholder').style.display='flex';">
+                <div class="logo-placeholder" id="logoPlaceholder" style="display: none;">
+                    <i class="fas fa-tv"></i>
+                </div>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav mx-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showPage('home')">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showPage('watchlog')">Watchlog</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showPage('categories')">Categories</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showPage('reviews')">Reviews</a>
+                    </li>
+                </ul>
+                <button class="theme-toggle" onclick="toggleTheme()">
+                    <i class="fas fa-moon" id="themeIcon"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-container">
+        <!-- Home Page -->
+        <div id="home" class="page-content active">
+            <div class="container">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <button class="btn btn-primary" onclick="openAddDramaModal()">
+                        <i class="fas fa-plus"></i> Add New Drama
+                    </button>
+                </div>
+                <div class="row" id="homeCards"></div>
+            </div>
+        </div>
+
+        <!-- Watchlog Page -->
+        <div id="watchlog" class="page-content">
+            <div class="container">
+                
+               <h5 class="mt-4" style="color: green; padding: 8px 10x; border-radius: 8px; display: inline-block; font-size: 1.2rem;">Completed</h5>
+                <div class="scroll-container" id="completedList"></div>
+
+                <h5 class="mt-5" style="color: red; padding: 8px 10px; border-radius: 8px; display: inline-block; font-size: 1.2rem;">Watching</h5>
+                <div class="scroll-container" id="watchingList"></div>
+
+                <h5 class="mt-5" style="color: blue; padding: 8px 10px; border-radius: 8px; display: inline-block; font-size: 1.2rem;">Plan to Watch</h5>
+                <div class="scroll-container" id="planList"></div>
+            </div>
+        </div>
+
+        <!-- Categories Page -->
+        <div id="categories" class="page-content">
+            <div class="container">
+                
+                <div class="search-box mb-4">
+                    <input type="text" class="form-control" id="searchInput" placeholder="🔍 Search drama..." onkeyup="searchDrama()">
+                </div>
+
+                <div class="mb-4">
+                    <button class="btn btn-outline-primary filter-btn" onclick="filterByYear('all')">All</button>
+                    <button class="btn btn-outline-primary filter-btn" onclick="filterByYear(2025)">2025</button>
+                    <button class="btn btn-outline-primary filter-btn" onclick="filterByYear(2024)">2024</button>
+                    <button class="btn btn-outline-primary filter-btn" onclick="filterByYear(2023)">2023</button>
+                    <button class="btn btn-outline-primary filter-btn" onclick="filterByYear(2022)">2022</button>
+                </div>
+
+                <div class="row mb-4">
+                    <div class="col-md-4">
+                        <div class="stats-card">
+                            <h3 id="totalDramas">0</h3>
+                            <p>Total Dramas</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="stats-card">
+                            <h3 id="completedCount">0</h3>
+                            <p>Completed</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="stats-card">
+                            <h3 id="watchingCount">0</h3>
+                            <p>Watching</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row" id="categoriesCards"></div>
+            </div>
+        </div>
+
+        <!-- Reviews Page -->
+        <div id="reviews" class="page-content">
+                <div class="scroll-container" id="completedList"></div>
+                <div class="scroll-container" id="watchingList"></div>
+                <div class="scroll-container" id="planList"></div>
+                <div class="row" id="reviewsList"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 K-Track. All rights reserved.</p>
+            <button class="btn btn-outline-light btn-sm" data-bs-toggle="modal" data-bs-target="#aboutModal">
+                About Developer
+            </button>
+        </div>
+    </footer>
+
+    <!-- About Modal -->
+    <div class="modal fade" id="aboutModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">About Developer</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p><strong>Anyeong chingu! ✨</strong></p>
+                    <p>Kenalin aku <strong>Veronika Jean Adinesa Putri</strong>, tapi cukup panggil Vero aja. Sekarang aku kuliah di Universitas Sugeng Hartono, jurusan Bisnis Digital semester 5 (NIM 062302081).</p>
+                    <p>Aku lumayan suka hal-hal yang berbau desain jadi Selamat datang di halaman proyekku!</p>
+                    <p>K-Track ku ini lahir dari sebuah hobi kecil yang terkadang jadi healing spot kalo lagi suntuk yaitu nonton K-Drama. Aku ingin kalian yang punya hobi sama bisa punya tempat yang simple, rapi, dan menyenangkan buat ngetrack semua tontonan kalian.</p>
+                    <p>Semoga kalian merasa ditemani di sini 🤍</p>
+                    <p><strong>Find me on:</strong></p>
+                    <p>
+                        <a href="https://instagram.com/veronikaaajn" target="_blank"><i class="fab fa-instagram"></i> @veronikaaajn</a><br>
+                        <a href="https://tiktok.com/@veroonikaaajn" target="_blank"><i class="fab fa-tiktok"></i> @veroonikaaajn</a><br>
+                        <a href="https://youtube.com/@Veronikaaajn" target="_blank"><i class="fab fa-youtube"></i> Veronikaaajn</a>
+                    </p>
+                    <hr>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Fullscreen Media Overlay -->
+    <div class="fullscreen-overlay" id="fullscreenOverlay" onclick="closeFullscreen()">
+        <span class="fullscreen-close">&times;</span>
+        <div id="fullscreenContent" class="fullscreen-content"></div>
+    </div>
+
+    <!-- Drama Detail Modal -->
+    <div class="modal fade" id="dramaModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="dramaModalTitle"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="dramaModalBody"></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" id="deleteDramaBtn" onclick="deleteDrama()" style="display: none;">
+                        <i class="fas fa-trash"></i> Delete Drama
+                    </button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="saveChanges()">
+                        <i class="fas fa-save"></i> Save Changes
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Drama Modal -->
+    <div class="modal fade" id="addDramaModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add New Drama</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Title *</label>
+                            <input type="text" class="form-control" id="newDramaTitle" placeholder="Drama title" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Year *</label>
+                            <input type="number" class="form-control" id="newDramaYear" placeholder="2025" min="2000" max="2030" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Total Episodes *</label>
+                            <input type="number" class="form-control" id="newDramaEpisodes" placeholder="16" min="1" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Current Episode</label>
+                            <input type="number" class="form-control" id="newDramaCurrentEp" placeholder="0" min="0" value="0">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Status *</label>
+                            <select class="form-select" id="newDramaStatus" required>
+                                <option value="plan">Plan to Watch</option>
+                                <option value="watching">Watching</option>
+                                <option value="completed">Completed</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Rating</label>
+                            <select class="form-select" id="newDramaRating">
+                                <option value="0">No Rating</option>
+                                <option value="1">★ (1)</option>
+                                <option value="2">★★ (2)</option>
+                                <option value="3">★★★ (3)</option>
+                                <option value="4">★★★★ (4)</option>
+                                <option value="5">★★★★★ (5)</option>
+                            </select>
+                        </div>
+                        <div class="col-12 mb-3">
+                            <label class="form-label">Genres (separate with comma) *</label>
+                            <input type="text" class="form-control" id="newDramaGenres" placeholder="Romance, Comedy, Drama" required>
+                        </div>
+                        <div class="col-12 mb-3">
+                            <label class="form-label">Poster Image</label>
+                            <input type="file" class="form-control" id="newDramaPoster" accept="image/*">
+                            <small class="text-muted">Upload drama poster (optional)</small>
+                        </div>
+                        <div class="col-12 mb-3">
+                            <label class="form-label">Review</label>
+                            <textarea class="form-control" id="newDramaReview" rows="3" placeholder="Write your review..."></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="addNewDrama()">
+                        <i class="fas fa-plus"></i> Add Drama
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Data Drama
+        const dramaData = [
+            {id: 1, title: "The Trauma Code: Heroes On Call", year: 2025, status: "completed", episode: 16, currentEp: 16, rating: 5, genre: ["Medical", "Drama"], review: "Drama medis yang sangat menyentuh!", poster: "asset/gambar1.jpg", media: []},
+            {id: 2, title: "Bon Appétit, Your Majesty", year: 2025, status: "completed", episode: 12, currentEp: 12, rating: 4, genre: ["Historical", "Romance"], review: "Kombinasi kuliner dan kerajaan yang unik!", poster: "asset/gambar2.jpg", media: []},
+            {id: 3, title: "Newtopia", year: 2025, status: "completed", episode: 10, currentEp: 10, rating: 5, genre: ["Thriller", "Sci-Fi"], review: "Cerita zombie yang fresh dan menegangkan!", poster: "asset/gambar3.jpg", media: []},
+            {id: 4, title: "Confidence Queen", year: 2025, status: "completed", episode: 16, currentEp: 16, rating: 4, genre: ["Comedy", "Romance"], review: "Inspiring dan menghibur!", poster: "asset/gambar4.jpg", media: []},
+            {id: 5, title: "The Witch", year: 2025, status: "completed", episode: 12, currentEp: 12, rating: 5, genre: ["Fantasy", "Mystery"], review: "Plot twist yang bikin melongo!", poster: "asset/gambar5.jpg", media: []},
+            {id: 6, title: "Undercover High School", year: 2025, status: "completed", episode: 16, currentEp: 16, rating: 4, genre: ["Action", "School"], review: "Aksi seru di lingkungan sekolah!", poster: "asset/gambar6.jpg", media: []},
+            {id: 7, title: "Resident Playbook", year: 2025, status: "completed", episode: 12, currentEp: 12, rating: 4, genre: ["Medical", "Romance"], review: "Sweet medical romance!", poster: "asset/gambar7.jpg", media: []},
+            {id: 8, title: "Head Over Heels", year: 2025, status: "completed", episode: 16, currentEp: 16, rating: 5, genre: ["Romance", "Comedy"], review: "Romcom yang bikin baper!", poster: "asset/gambar8.jpg", media: []},
+            {id: 9, title: "Salon de Holmes", year: 2025, status: "completed", episode: 10, currentEp: 10, rating: 4, genre: ["Mystery", "Comedy"], review: "Misteri di salon rambut yang menarik!", poster: "asset/gambar9.jpg", media: []},
+            {id: 10, title: "Bitch and Rich 2", year: 2025, status: "completed", episode: 10, currentEp: 10, rating: 5, genre: ["Drama", "Thriller"], review: "Season 2 yang lebih dramatis!", poster: "asset/gambar10.jpg", media: []},
+            {id: 11, title: "Genie, Make a Wish", year: 2025, status: "completed", episode: 12, currentEp: 12, rating: 4, genre: ["Fantasy", "Romance"], review: "Fantasi romantis yang manis!", poster: "asset/gambar11.jpg", media: []},
+            {id: 12, title: "Would You Marry Me", year: 2025, status: "completed", episode: 16, currentEp: 16, rating: 4, genre: ["Romance", "Drama"], review: "Love story yang heartwarming!", poster: "asset/gambar12.jpg", media: []},
+            {id: 13, title: "The Winning Try", year: 2025, status: "completed", episode: 12, currentEp: 12, rating: 5, genre: ["Sports", "Drama"], review: "Drama rugby yang penuh semangat!", poster: "asset/gambar13.jpg", media: []},
+            {id: 14, title: "The Potato Lab", year: 2025, status: "watching", episode: 16, currentEp: 8, rating: 4, genre: ["Comedy", "Drama"], review: "Cerita unik tentang kentang research!", poster: "asset/gambar14.jpg", media: []},
+            {id: 15, title: "Mercy for None", year: 2025, status: "watching", episode: 12, currentEp: 6, rating: 5, genre: ["Action", "Thriller"], review: "Action thriller yang intense!", poster: "asset/gambar15.jpg", media: []},
+            {id: 16, title: "Beyond the Bar", year: 2025, status: "watching", episode: 10, currentEp: 5, rating: 4, genre: ["Drama", "Legal"], review: "Legal drama yang menegangkan!", poster: "asset/gambar16.jpg", media: []},
+            {id: 17, title: "Flex x Cop", year: 2024, status: "completed", episode: 16, currentEp: 16, rating: 5, genre: ["Action", "Comedy"], review: "Duo detective yang lucu dan seru!", poster: "asset/gambar17.jpg", media: []},
+            {id: 18, title: "The Judge from Hell", year: 2024, status: "completed", episode: 14, currentEp: 14, rating: 5, genre: ["Fantasy", "Legal"], review: "Konsep hakim dari neraka yang brilliant!", poster: "asset/gambar18.jpg", media: []},
+            {id: 19, title: "Queen of Tears", year: 2024, status: "completed", episode: 16, currentEp: 16, rating: 5, genre: ["Romance", "Drama"], review: "Emotional roller coaster yang amazing!", poster: "asset/gambar19.jpg", media: []},
+            {id: 20, title: "Seoul Busters", year: 2024, status: "completed", episode: 20, currentEp: 20, rating: 4, genre: ["Action", "Comedy"], review: "Tim detektif kocak di Seoul!", poster: "asset/gambar20.jpg", media: []},
+            {id: 21, title: "Hierarchy", year: 2024, status: "completed", episode: 7, currentEp: 7, rating: 4, genre: ["Drama", "School"], review: "Drama sekolah elit yang menarik!", poster: "asset/gambar21.jpg", media: []},
+            {id: 22, title: "A Shop for Killers", year: 2024, status: "watching", episode: 8, currentEp: 4, rating: 5, genre: ["Action", "Thriller"], review: "Toko pembunuh dengan cerita intense!", poster: "asset/gambar22.jpg", media: []},
+            {id: 23, title: "King the Land", year: 2023, status: "completed", episode: 16, currentEp: 16, rating: 5, genre: ["Romance", "Comedy"], review: "Chemistry couple-nya perfect!", poster: "asset/gambar23.jpg", media: []},
+            {id: 24, title: "Celebrity", year: 2023, status: "completed", episode: 12, currentEp: 12, rating: 4, genre: ["Drama", "Thriller"], review: "Dark side of social media influencer!", poster: "asset/gambar24.jpg", media: []},
+            {id: 25, title: "Daily Dose of Sunshine", year: 2023, status: "completed", episode: 12, currentEp: 12, rating: 5, genre: ["Medical", "Drama"], review: "Psychiatric ward drama yang touching!", poster: "asset/gambar25.jpg", media: []},
+            {id: 26, title: "Ghost Doctor", year: 2022, status: "completed", episode: 16, currentEp: 16, rating: 4, genre: ["Medical", "Fantasy"], review: "Medical drama dengan elemen supernatural!", poster: "asset/gambar26.jpg", media: []},
+            {id: 27, title: "All of Us Are Dead", year: 2022, status: "completed", episode: 12, currentEp: 12, rating: 5, genre: ["Horror", "Thriller"], review: "Zombie apocalypse di sekolah yang epic!", poster: "asset/gambar27.jpg", media: []},
+            {id: 28, title: "Forecasting Love and Weather", year: 2022, status: "completed", episode: 16, currentEp: 16, rating: 4, genre: ["Romance", "Drama"], review: "Office romance di kantor meteorologi!", poster: "asset/gambar28.jpg", media: []},
+            {id: 29, title: "A Business Proposal", year: 2022, status: "completed", episode: 12, currentEp: 12, rating: 5, genre: ["Romance", "Comedy"], review: "Romcom terbaik 2022!", poster: "asset/gambar29.jpg", media: []},
+            {id: 30, title: "Thirty-Nine", year: 2022, status: "plan", episode: 12, currentEp: 0, rating: 0, genre: ["Drama", "Friendship"], review: "", poster: "asset/gambar30.jpg", media: []},
+            {id: 31, title: "Military Prosecutor Doberman", year: 2022, status: "plan", episode: 16, currentEp: 0, rating: 0, genre: ["Legal", "Action"], review: "", poster: "asset/gambar31.jpg", media: []},
+            {id: 32, title: "Soundtrack #1", year: 2022, status: "completed", episode: 4, currentEp: 4, rating: 5, genre: ["Romance", "Music"], review: "Short but beautiful love story!", poster: "asset/gambar32.jpg", media: []},
+            {id: 33, title: "Our Blues", year: 2022, status: "plan", episode: 20, currentEp: 0, rating: 0, genre: ["Drama", "Life"], review: "", poster: "asset/gambar33.jpg", media: []},
+            {id: 34, title: "Sh**ting Stars", year: 2022, status: "completed", episode: 16, currentEp: 16, rating: 4, genre: ["Romance", "Comedy"], review: "Behind the scene entertainment industry!", poster: "asset/gambar34.jpg", media: []},
+            {id: 35, title: "Woori the Virgin", year: 2022, status: "completed", episode: 14, currentEp: 14, rating: 4, genre: ["Romance", "Comedy"], review: "Remake yang menghibur!", poster: "asset/gambar35.jpg", media: []},
+            {id: 36, title: "The Sound of Magic", year: 2022, status: "watching", episode: 6, currentEp: 3, rating: 4, genre: ["Fantasy", "Drama"], review: "Musical fantasy yang magical!", poster: "asset/gambar36.jpg", media: []},
+            {id: 37, title: "If You Wish Upon Me", year: 2022, status: "completed", episode: 16, currentEp: 16, rating: 5, genre: ["Drama", "Medical"], review: "Heartwarming drama tentang hospice care!", poster: "asset/gambar37.jpg", media: []},
+            {id: 38, title: "Little Women", year: 2022, status: "completed", episode: 12, currentEp: 12, rating: 5, genre: ["Drama", "Thriller"], review: "Plot yang kompleks dan menarik!", poster: "asset/gambar38.jpg", media: []},
+            {id: 39, title: "One Dollar Lawyer", year: 2022, status: "completed", episode: 12, currentEp: 12, rating: 4, genre: ["Legal", "Comedy"], review: "Lawyer murah dengan keadilan tinggi!", poster: "asset/gambar39.jpg", media: []},
+            {id: 40, title: "Love in Contract", year: 2022, status: "completed", episode: 16, currentEp: 16, rating: 4, genre: ["Romance", "Comedy"], review: "Contract marriage yang sweet!", poster: "asset/gambar40.jpg", media: []},
+            {id: 41, title: "Cheer Up", year: 2022, status: "completed", episode: 16, currentEp: 16, rating: 4, genre: ["Romance", "School"], review: "Cheerleading team dengan mystery!", poster: "asset/gambar41.jpg", media: []},
+            {id: 42, title: "The First Responders", year: 2022, status: "plan", episode: 12, currentEp: 0, rating: 0, genre: ["Action", "Medical"], review: "", poster: "asset/gambar42.jpg", media: []},
+            {id: 43, title: "Rookie Cops", year: 2022, status: "completed", episode: 16, currentEp: 16, rating: 4, genre: ["Action", "School"], review: "Police academy drama yang seru!", poster: "asset/gambar43.jpg", media: []}
+        ];
+
+        let currentDrama = null;
+        let allDramas = [...dramaData];
+
+        // Initialize
+        window.onload = function() {
+            loadData();
+            loadLogo();
+            renderHome();
+            renderWatchlog();
+            renderCategories();
+            renderReviews();
+            updateStats();
+            
+            // Add logo upload event listener
+            const logoUpload = document.getElementById('logoUpload');
+            if (logoUpload) {
+                logoUpload.addEventListener('change', handleLogoUpload);
+            }
+        };
+
+        function loadData() {
+            const saved = localStorage.getItem('ktrackData');
+            if (saved) {
+                allDramas = JSON.parse(saved);
+            }
+        }
+
+        function saveData() {
+            localStorage.setItem('ktrackData', JSON.stringify(allDramas));
+        }
+
+        // Logo Functions
+        function loadLogo() {
+            const savedLogo = localStorage.getItem('ktrackLogo');
+            if (savedLogo) {
+                const logoImg = document.getElementById('appLogo');
+                const logoPlaceholder = document.getElementById('logoPlaceholder');
+                logoImg.src = savedLogo;
+                logoImg.style.display = 'block';
+                logoPlaceholder.style.display = 'none';
+            }
+        }
+
+        function handleLogoUpload(e) {
+            const file = e.target.files[0];
+            if (file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const logoData = event.target.result;
+                    localStorage.setItem('ktrackLogo', logoData);
+                    
+                    const logoImg = document.getElementById('appLogo');
+                    const logoPlaceholder = document.getElementById('logoPlaceholder');
+                    logoImg.src = logoData;
+                    logoImg.style.display = 'block';
+                    logoPlaceholder.style.display = 'none';
+                    
+                    alert('Logo updated successfully!');
+                };
+                reader.readAsDataURL(file);
+            } else {
+                alert('Please upload a valid image file.');
+            }
+        }
+
+        function resetLogo() {
+            if (confirm('Are you sure you want to reset to the default logo?')) {
+                localStorage.removeItem('ktrackLogo');
+                const logoImg = document.getElementById('appLogo');
+                const logoPlaceholder = document.getElementById('logoPlaceholder');
+                logoImg.src = 'asset/logo.png';
+                logoImg.style.display = 'block';
+                logoPlaceholder.style.display = 'none';
+                alert('Logo reset to default!');
+            }
+        }
+
+        // Theme Toggle
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
+            const icon = document.getElementById('themeIcon');
+            if (document.body.classList.contains('dark-mode')) {
+                icon.classList.remove('fa-moon');
+                icon.classList.add('fa-sun');
+            } else {
+                icon.classList.remove('fa-sun');
+                icon.classList.add('fa-moon');
+            }
+        }
+
+        // Page Navigation
+        function showPage(page) {
+            document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
+            document.getElementById(page).classList.add('active');
+            
+            if (page === 'home') renderHome();
+            if (page === 'watchlog') renderWatchlog();
+            if (page === 'categories') renderCategories();
+            if (page === 'reviews') renderReviews();
+        }
+
+        // Render Home
+        function renderHome() {
+            const container = document.getElementById('homeCards');
+            container.innerHTML = '';
+            
+            allDramas.forEach(drama => {
+                const progress = (drama.currentEp / drama.episode) * 100;
+                const statusClass = drama.status === 'completed' ? 'status-completed' : 
+                                   drama.status === 'watching' ? 'status-watching' : 'status-plan';
+                const statusText = drama.status === 'completed' ? 'Completed' : 
+                                  drama.status === 'watching' ? 'Watching' : 'Plan to Watch';
+                
+                container.innerHTML += `
+                    <div class="col-md-6 col-lg-4">
+                        <div class="drama-card" onclick="openDramaModal(${drama.id})">
+                            <img src="${drama.poster}" alt="${drama.title}" onerror="this.src='https://via.placeholder.com/300x400/16476A/ffffff?text=${encodeURIComponent(drama.title)}'">
+                            <div class="card-body">
+                                <span class="status-badge ${statusClass}">${statusText}</span>
+                                <h5 class="card-title">${drama.title}</h5>
+                                <div class="genre-tag">${drama.genre.join(' • ')}</div>
+                                <div class="progress mt-3">
+                                    <div class="progress-bar bg-success" style="width: ${progress}%"></div>
+                                </div>
+                                <p class="mt-2 mb-2"><small>Episode ${drama.currentEp}/${drama.episode}</small></p>
+                                <div class="rating">
+                                    ${'★'.repeat(drama.rating)}${'☆'.repeat(5-drama.rating)}
+                                </div>
+                                <p class="mt-2"><small>${drama.review || 'No review yet'}</small></p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        // Render Watchlog
+        function renderWatchlog() {
+            const completed = allDramas.filter(d => d.status === 'completed');
+            const watching = allDramas.filter(d => d.status === 'watching');
+            const plan = allDramas.filter(d => d.status === 'plan');
+
+            renderWatchlogSection('completedList', completed);
+            renderWatchlogSection('watchingList', watching);
+            renderWatchlogSection('planList', plan);
+        }
+
+        function renderWatchlogSection(containerId, dramas) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+            
+            dramas.forEach(drama => {
+                const progress = (drama.currentEp / drama.episode) * 100;
+                container.innerHTML += `
+                    <div class="scroll-card drama-card" onclick="openDramaModal(${drama.id})">
+                        <img src="${drama.poster}" alt="${drama.title}" onerror="this.src='https://via.placeholder.com/250x350/16476A/ffffff?text=${encodeURIComponent(drama.title)}'">
+                        <div class="card-body">
+                            <h6 class="card-title">${drama.title}</h6>
+                            <div class="genre-tag">${drama.genre.join(' • ')}</div>
+                            <p class="mb-1"><small>${drama.year} • ${drama.episode} eps</small></p>
+                            <div class="progress mt-2">
+                                <div class="progress-bar bg-success" style="width: ${progress}%"></div>
+                            </div>
+                            <p class="mt-1"><small>${drama.currentEp}/${drama.episode}</small></p>
+                            <div class="rating">
+                                ${'★'.repeat(drama.rating)}${'☆'.repeat(5-drama.rating)}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        // Render Categories
+        function renderCategories(filter = 'all') {
+            const container = document.getElementById('categoriesCards');
+            container.innerHTML = '';
+            
+            let filtered = allDramas;
+            if (filter !== 'all') {
+                filtered = allDramas.filter(d => d.year === filter);
+            }
+            
+            filtered.forEach(drama => {
+                const progress = (drama.currentEp / drama.episode) * 100;
+                const statusClass = drama.status === 'completed' ? 'status-completed' : 
+                                   drama.status === 'watching' ? 'status-watching' : 'status-plan';
+                const statusText = drama.status === 'completed' ? 'Completed' : 
+                                  drama.status === 'watching' ? 'Watching' : 'Plan to Watch';
+                
+                container.innerHTML += `
+                    <div class="col-md-6 col-lg-3 drama-item" data-title="${drama.title.toLowerCase()}">
+                        <div class="drama-card" onclick="openDramaModal(${drama.id})">
+                            <img src="${drama.poster}" alt="${drama.title}" onerror="this.src='https://via.placeholder.com/250x350/16476A/ffffff?text=${encodeURIComponent(drama.title)}'">
+                            <div class="card-body">
+                                <span class="status-badge ${statusClass}">${statusText}</span>
+                                <h6 class="card-title">${drama.title}</h6>
+                                <div class="genre-tag">${drama.genre.join(' • ')}</div>
+                                <p class="mb-1"><small>${drama.year}</small></p>
+                                <div class="progress mt-2">
+                                    <div class="progress-bar bg-success" style="width: ${progress}%"></div>
+                                </div>
+                                <p class="mt-1"><small>${drama.currentEp}/${drama.episode}</small></p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        // Render Reviews
+        function renderReviews() {
+            const container = document.getElementById('reviewsList');
+            container.innerHTML = '';
+            
+            const reviewed = allDramas.filter(d => d.review && d.review.trim() !== '');
+            
+            reviewed.forEach(drama => {
+                let mediaHTML = '';
+                if (drama.media && drama.media.length > 0) {
+                    mediaHTML = '<div class="media-grid">';
+                    drama.media.forEach((media, index) => {
+                        if (media.type === 'image') {
+                            mediaHTML += `
+                                <div class="media-item" onclick="openFullscreen('${media.url}', 'image')">
+                                    <img src="${media.url}" alt="Scene">
+                                </div>
+                            `;
+                        } else if (media.type === 'video') {
+                            mediaHTML += `
+                                <div class="media-item" onclick="openFullscreen('${media.url}', 'video')">
+                                    <video src="${media.url}"></video>
+                                    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 2rem;">
+                                        <i class="fas fa-play-circle"></i>
+                                    </div>
+                                </div>
+                            `;
+                        }
+                    });
+                    mediaHTML += '</div>';
+                }
+
+                container.innerHTML += `
+                    <div class="col-md-6 col-lg-4 mb-4">
+                        <div class="card review-card">
+                            <div class="card-body">
+                                <h5 class="card-title">${drama.title}</h5>
+                                <div class="rating mb-2">
+                                    ${'★'.repeat(drama.rating)}${'☆'.repeat(5-drama.rating)}
+                                </div>
+                                <p class="mb-2">${drama.review}</p>
+                                ${mediaHTML}
+                                <div class="d-flex gap-2 mt-3">
+                                    <button class="btn btn-sm btn-primary" onclick="openReviewModal(${drama.id})">
+                                        <i class="fas fa-edit"></i> Edit
+                                    </button>
+                                    <button class="btn btn-sm btn-danger" onclick="deleteReview(${drama.id})">
+                                        <i class="fas fa-trash"></i> Delete
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            if (reviewed.length === 0) {
+                container.innerHTML = '<div class="col-12 text-center"><p class="text-muted">No reviews yet. Start writing your reviews!</p></div>';
+            }
+        }
+
+        // Open Drama Modal
+        function openDramaModal(id) {
+            currentDrama = allDramas.find(d => d.id === id);
+            if (!currentDrama) return;
+
+            document.getElementById('dramaModalTitle').textContent = currentDrama.title;
+            
+            // Show delete button for existing dramas
+            document.getElementById('deleteDramaBtn').style.display = 'inline-block';
+            
+            const progress = (currentDrama.currentEp / currentDrama.episode) * 100;
+            
+            document.getElementById('dramaModalBody').innerHTML = `
+                <div class="row">
+                    <div class="col-md-4">
+                        <img src="${currentDrama.poster}" class="img-fluid rounded" alt="${currentDrama.title}" onerror="this.src='https://via.placeholder.com/250x350/16476A/ffffff?text=${encodeURIComponent(currentDrama.title)}'">
+                    </div>
+                    <div class="col-md-8">
+                        <h6>Genre:</h6>
+                        <p>${currentDrama.genre.join(', ')}</p>
+                        
+                        <h6>Year:</h6>
+                        <p>${currentDrama.year}</p>
+                        
+                        <h6>Status:</h6>
+                        <select class="form-select mb-3" id="statusSelect">
+                            <option value="watching" ${currentDrama.status === 'watching' ? 'selected' : ''}>Watching</option>
+                            <option value="completed" ${currentDrama.status === 'completed' ? 'selected' : ''}>Completed</option>
+                            <option value="plan" ${currentDrama.status === 'plan' ? 'selected' : ''}>Plan to Watch</option>
+                        </select>
+                        
+                        <h6>Progress:</h6>
+                        <div class="input-group mb-3">
+                            <input type="number" class="form-control" id="currentEpInput" value="${currentDrama.currentEp}" min="0" max="${currentDrama.episode}">
+                            <span class="input-group-text">/ ${currentDrama.episode}</span>
+                        </div>
+                        <div class="progress mb-3">
+                            <div class="progress-bar bg-success" style="width: ${progress}%"></div>
+                        </div>
+                        
+                        <h6>Rating:</h6>
+                        <div class="mb-3">
+                            <select class="form-select" id="ratingSelect">
+                                <option value="0" ${currentDrama.rating === 0 ? 'selected' : ''}>No Rating</option>
+                                <option value="1" ${currentDrama.rating === 1 ? 'selected' : ''}>★ (1)</option>
+                                <option value="2" ${currentDrama.rating === 2 ? 'selected' : ''}>★★ (2)</option>
+                                <option value="3" ${currentDrama.rating === 3 ? 'selected' : ''}>★★★ (3)</option>
+                                <option value="4" ${currentDrama.rating === 4 ? 'selected' : ''}>★★★★ (4)</option>
+                                <option value="5" ${currentDrama.rating === 5 ? 'selected' : ''}>★★★★★ (5)</option>
+                            </select>
+                        </div>
+                        
+                        <h6>Review:</h6>
+                        <textarea class="form-control" id="reviewInput" rows="4" placeholder="Write your review here...">${currentDrama.review}</textarea>
+                        
+                        <h6 class="mt-3">Add Photos/Videos:</h6>
+                        <input type="file" class="form-control mb-2" id="mediaInput" accept="image/*,video/*" multiple>
+                        <small class="text-muted">Upload your favorite scenes (images or videos)</small>
+                        
+                        <div id="mediaPreview" class="media-grid mt-3"></div>
+                    </div>
+                </div>
+            `;
+
+            // Display existing media
+            displayMediaPreview();
+
+            const modal = new bootstrap.Modal(document.getElementById('dramaModal'));
+            modal.show();
+
+            // Add event listener for file input
+            document.getElementById('mediaInput').addEventListener('change', handleMediaUpload);
+        }
+
+        // Handle Media Upload
+        function handleMediaUpload(e) {
+            const files = e.target.files;
+            if (!currentDrama.media) currentDrama.media = [];
+
+            Array.from(files).forEach(file => {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const mediaType = file.type.startsWith('image/') ? 'image' : 'video';
+                    currentDrama.media.push({
+                        type: mediaType,
+                        url: event.target.result
+                    });
+                    displayMediaPreview();
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        // Display Media Preview
+        function displayMediaPreview() {
+            const preview = document.getElementById('mediaPreview');
+            if (!preview) return;
+            
+            preview.innerHTML = '';
+            
+            if (currentDrama.media && currentDrama.media.length > 0) {
+                currentDrama.media.forEach((media, index) => {
+                    const mediaDiv = document.createElement('div');
+                    mediaDiv.className = 'media-item position-relative';
+                    
+                    if (media.type === 'image') {
+                        mediaDiv.innerHTML = `
+                            <img src="${media.url}" alt="Preview">
+                            <button class="btn btn-danger btn-sm position-absolute top-0 end-0 m-1" onclick="removeMedia(${index})" style="z-index: 10;">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        `;
+                    } else {
+                        mediaDiv.innerHTML = `
+                            <video src="${media.url}"></video>
+                            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 2rem;">
+                                <i class="fas fa-play-circle"></i>
+                            </div>
+                            <button class="btn btn-danger btn-sm position-absolute top-0 end-0 m-1" onclick="removeMedia(${index})" style="z-index: 10;">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        `;
+                    }
+                    
+                    preview.appendChild(mediaDiv);
+                });
+            }
+        }
+
+        // Remove Media
+        function removeMedia(index) {
+            if (currentDrama.media) {
+                currentDrama.media.splice(index, 1);
+                displayMediaPreview();
+            }
+        }
+
+        // Open Fullscreen
+        function openFullscreen(url, type) {
+            event.stopPropagation();
+            const overlay = document.getElementById('fullscreenOverlay');
+            const content = document.getElementById('fullscreenContent');
+            
+            if (type === 'image') {
+                content.innerHTML = `<img src="${url}" class="fullscreen-content" alt="Fullscreen">`;
+            } else {
+                content.innerHTML = `<video src="${url}" class="fullscreen-content" controls autoplay></video>`;
+            }
+            
+            overlay.classList.add('active');
+        }
+
+        // Close Fullscreen
+        function closeFullscreen() {
+            const overlay = document.getElementById('fullscreenOverlay');
+            overlay.classList.remove('active');
+            document.getElementById('fullscreenContent').innerHTML = '';
+        }
+
+        // Open Review Modal
+        function openReviewModal(id) {
+            openDramaModal(id);
+        }
+
+        // Save Changes
+        function saveChanges() {
+            if (!currentDrama) return;
+
+            const newStatus = document.getElementById('statusSelect').value;
+            const newEp = parseInt(document.getElementById('currentEpInput').value);
+            const newRating = parseInt(document.getElementById('ratingSelect').value);
+            const newReview = document.getElementById('reviewInput').value;
+
+            const dramaIndex = allDramas.findIndex(d => d.id === currentDrama.id);
+            if (dramaIndex !== -1) {
+                allDramas[dramaIndex].status = newStatus;
+                allDramas[dramaIndex].currentEp = Math.min(newEp, currentDrama.episode);
+                allDramas[dramaIndex].rating = newRating;
+                allDramas[dramaIndex].review = newReview;
+                allDramas[dramaIndex].media = currentDrama.media;
+                
+                saveData();
+                renderHome();
+                renderWatchlog();
+                renderCategories();
+                renderReviews();
+                updateStats();
+                
+                bootstrap.Modal.getInstance(document.getElementById('dramaModal')).hide();
+                
+                alert('Changes saved successfully!');
+            }
+        }
+
+        // Edit Review
+        function editReview(id) {
+            openReviewModal(id);
+        }
+
+        // Delete Review
+        function deleteReview(id) {
+            if (confirm('Are you sure you want to delete this review?')) {
+                const dramaIndex = allDramas.findIndex(d => d.id === id);
+                if (dramaIndex !== -1) {
+                    allDramas[dramaIndex].review = '';
+                    saveData();
+                    renderReviews();
+                    alert('Review deleted!');
+                }
+            }
+        }
+
+        // Search Drama
+        function searchDrama() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const items = document.querySelectorAll('.drama-item');
+            
+            items.forEach(item => {
+                const title = item.getAttribute('data-title');
+                if (title.includes(query)) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+
+        // Filter by Year
+        function filterByYear(year) {
+            renderCategories(year);
+        }
+
+        // Update Stats
+        function updateStats() {
+            const total = allDramas.length;
+            const completed = allDramas.filter(d => d.status === 'completed').length;
+            const watching = allDramas.filter(d => d.status === 'watching').length;
+            
+            document.getElementById('totalDramas').textContent = total;
+            document.getElementById('completedCount').textContent = completed;
+            document.getElementById('watchingCount').textContent = watching;
+        }
+
+        // Open Add Drama Modal
+        function openAddDramaModal() {
+            // Reset form
+            document.getElementById('newDramaTitle').value = '';
+            document.getElementById('newDramaYear').value = new Date().getFullYear();
+            document.getElementById('newDramaEpisodes').value = '';
+            document.getElementById('newDramaCurrentEp').value = '0';
+            document.getElementById('newDramaStatus').value = 'plan';
+            document.getElementById('newDramaRating').value = '0';
+            document.getElementById('newDramaGenres').value = '';
+            document.getElementById('newDramaPoster').value = '';
+            document.getElementById('newDramaReview').value = '';
+            
+            const modal = new bootstrap.Modal(document.getElementById('addDramaModal'));
+            modal.show();
+        }
+
+        // Add New Drama
+        function addNewDrama() {
+            const title = document.getElementById('newDramaTitle').value.trim();
+            const year = parseInt(document.getElementById('newDramaYear').value);
+            const episode = parseInt(document.getElementById('newDramaEpisodes').value);
+            const currentEp = parseInt(document.getElementById('newDramaCurrentEp').value);
+            const status = document.getElementById('newDramaStatus').value;
+            const rating = parseInt(document.getElementById('newDramaRating').value);
+            const genresInput = document.getElementById('newDramaGenres').value.trim();
+            const review = document.getElementById('newDramaReview').value.trim();
+            const posterFile = document.getElementById('newDramaPoster').files[0];
+
+            // Validation
+            if (!title || !year || !episode || !genresInput) {
+                alert('Please fill all required fields!');
+                return;
+            }
+
+            // Parse genres
+            const genres = genresInput.split(',').map(g => g.trim()).filter(g => g);
+
+            // Generate new ID
+            const newId = Math.max(...allDramas.map(d => d.id)) + 1;
+
+            // Process poster image
+            if (posterFile) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const newDrama = {
+                        id: newId,
+                        title: title,
+                        year: year,
+                        status: status,
+                        episode: episode,
+                        currentEp: Math.min(currentEp, episode),
+                        rating: rating,
+                        genre: genres,
+                        review: review,
+                        poster: event.target.result,
+                        media: []
+                    };
+
+                    allDramas.push(newDrama);
+                    saveData();
+                    renderHome();
+                    renderWatchlog();
+                    renderCategories();
+                    renderReviews();
+                    updateStats();
+
+                    bootstrap.Modal.getInstance(document.getElementById('addDramaModal')).hide();
+                    alert('Drama added successfully!');
+                };
+                reader.readAsDataURL(posterFile);
+            } else {
+                // No poster uploaded
+                const newDrama = {
+                    id: newId,
+                    title: title,
+                    year: year,
+                    status: status,
+                    episode: episode,
+                    currentEp: Math.min(currentEp, episode),
+                    rating: rating,
+                    genre: genres,
+                    review: review,
+                    poster: `https://via.placeholder.com/300x400/16476A/ffffff?text=${encodeURIComponent(title)}`,
+                    media: []
+                };
+
+                allDramas.push(newDrama);
+                saveData();
+                renderHome();
+                renderWatchlog();
+                renderCategories();
+                renderReviews();
+                updateStats();
+
+                bootstrap.Modal.getInstance(document.getElementById('addDramaModal')).hide();
+                alert('Drama added successfully!');
+            }
+        }
+
+        // Delete Drama
+        function deleteDrama() {
+            if (!currentDrama) return;
+
+            if (confirm(`Are you sure you want to delete "${currentDrama.title}"? This action cannot be undone.`)) {
+                const dramaIndex = allDramas.findIndex(d => d.id === currentDrama.id);
+                if (dramaIndex !== -1) {
+                    allDramas.splice(dramaIndex, 1);
+                    saveData();
+                    renderHome();
+                    renderWatchlog();
+                    renderCategories();
+                    renderReviews();
+                    updateStats();
+
+                    bootstrap.Modal.getInstance(document.getElementById('dramaModal')).hide();
+                    alert('Drama deleted successfully!');
+                }
+            }
+        }
+    </script>
+</body>
+</html>
